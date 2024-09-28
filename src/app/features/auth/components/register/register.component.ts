@@ -6,15 +6,15 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { register } from '../store/auth.actions';
-import { RegisterRequestInterface } from '../types/registerRequest.interface';
+import { register } from '../../store/auth.actions';
+import { RegisterRequestInterface } from '../../types/registerRequest.interface';
 import { Store } from '@ngrx/store';
 import { CommonModule } from '@angular/common';
-import { AuthStateInterface } from '../types/authState.interface';
-import { selectIsSubmitting, selectValidationErrors } from '../store/auth.reducer';
+import { AuthStateInterface } from '../../types/authState.interface';
+import { selectIsSubmitting, selectValidationErrors } from '../../store/auth.reducer';
 import { combineLatest, Observable } from 'rxjs';
-import { BackendErrorMessages } from '../../shared/components/backendErrorMessages/backendErrorMessages.component';
-import { BackendErrorsInterface } from '../../shared/types/backendErrors.interface';
+import { BackendErrorMessages } from '../../../../shared/components/backendErrorMessages/backendErrorMessages.component';
+import { BackendErrorsInterface } from '../../../../shared/types/backendErrors.interface';
 
 
 @Component({
@@ -36,6 +36,8 @@ export class RegisterComponent {
         isSubmitting: boolean;
         backendErrors: BackendErrorsInterface | null;
         }> ;
+
+
   constructor(
     private fb: FormBuilder,
     private store: Store<{auth: AuthStateInterface}>

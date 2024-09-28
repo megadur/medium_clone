@@ -1,14 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
+import { catchError, concatMap, map, switchMap, tap } from 'rxjs/operators';
 
-import { CurrentUserInterface } from '../../shared/types/currentUser.interface';
+import { CurrentUserInterface } from '../../../shared/types/currentUser.interface';
 import { AuthService } from '../services/auth.service';
 import { of } from 'rxjs';
 import { authActions } from './auth.actions';
 import { HttpErrorResponse } from '@angular/common/http';
-import { PersistanceService } from '../../shared/services/persistance.service';
+import { PersistanceService } from '../../../shared/services/persistance.service';
+import { Router } from '@angular/router';
 
 export const registerEffect = createEffect(
   (actions$ =
@@ -35,6 +36,45 @@ export const registerEffect = createEffect(
     )
   },
   {functional: true}
+)
+export const getCurrentUserEffect = createEffect(
+  (
+    actions$ = inject(Actions),
+    authService = inject(AuthService),
+    persistanceService = inject(PersistanceService)
+  ) => {
+    return actions$.pipe(
+      ofType(authActions.getCurrentUser),
+      switchMap(() => {
+        const token = persistanceService.get('accessToken')
+
+        if (!token) {
+          return of(authActions.getCurrentUserFailure())
+        }
+        return authService.getCurrentUser().pipe(
+          map((currentUser: CurrentUserInterface) => {
+            return authActions.getCurrentUserSuccess({currentUser})
+          }),
+          catchError(() => {
+            return of(authActions.getCurrentUserFailure())
+          })
+        )
+      })
+    )
+  },
+  {functional: true}
+)
+
+export const redirectAfterRegisterEffect = createEffect(
+  (actions$ = inject(Actions), router = inject(Router)) => {
+    return actions$.pipe(
+      ofType(authActions.registerSuccess),
+      tap(() => {
+        router.navigateByUrl('/')
+      })
+    )
+  },
+  {functional: true, dispatch: false}
 )
 
 // @Injectable()
