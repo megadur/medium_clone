@@ -2,10 +2,8 @@ import {CommonModule} from '@angular/common'
 import {Component} from '@angular/core'
 import {RouterLink} from '@angular/router'
 import {Store} from '@ngrx/store'
-import {combineLatest, Observable} from 'rxjs'
-import { selectCurrentUser } from '../../../features/auth/store/auth.reducer'
-import { CurrentUserInterface } from '../../types/currentUser.interface'
-
+import {combineLatest} from 'rxjs'
+import {selectCurrentUser} from 'src/app/auth/store/reducers'
 
 @Component({
   selector: 'mc-topbar',
@@ -14,11 +12,8 @@ import { CurrentUserInterface } from '../../types/currentUser.interface'
   imports: [RouterLink, CommonModule],
 })
 export class TopBarComponent {
-  data$ : Observable<{currentUser: CurrentUserInterface | null|undefined}>;
-
-  constructor(private store: Store) {
-    this.data$ = combineLatest({
-      currentUser: this.store.select(selectCurrentUser),
-    })
-  }
+  data$ = combineLatest({
+    currentUser: this.store.select(selectCurrentUser),
+  })
+  constructor(private store: Store) {}
 }
